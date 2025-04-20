@@ -2,246 +2,289 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title> PromoGate – Unlock Content Through Action </title>
+  <title>PromoGate – Unlock Content Through Action</title>
   <style>
     :root {
       --primary: #4a90e2;
       --background: #1a1a1a;
-      --text: #ffffff;
+      --card-bg: #2a2a2a;
+      --task-bg: #333;
+      --text: #fff;
+      --border: #404040;
+      --success: #28a745;
+      --error: #dc3545;
     }
 
-    body { 
+    /* Base */
+    body {
       font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
-      max-width: 700px;
-      margin: auto;
       background: var(--background);
       color: var(--text);
+      margin: 0;
+      padding: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
     }
-
     .card {
-      background: #2a2a2a;
+      background: var(--card-bg);
       border-radius: 8px;
       padding: 20px;
-      margin: 15px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
+    h1, h2 { margin-top: 0; }
 
+    /* Inputs & Buttons */
     input, select, button {
-      margin: 8px 0;
       width: 100%;
       padding: 12px;
-      border: 1px solid #404040;
+      margin: 8px 0;
+      border: 1px solid var(--border);
       border-radius: 6px;
-      background: #333;
+      background: var(--task-bg);
       color: var(--text);
+      font-size: 1rem;
+      box-sizing: border-box;
     }
-
     button {
       background: var(--primary);
       border: none;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: opacity .2s, transform .1s;
     }
-
-    button:hover {
-      opacity: 0.9;
+    button:hover { opacity: .9; transform: translateY(-1px); }
+    .feedback {
+      padding: 8px;
+      margin-top: 10px;
+      border-radius: 4px;
+      display: none;
+      font-weight: bold;
     }
+    .feedback.success { background: var(--success); }
+    .feedback.error   { background: var(--error); }
 
+    /* Task list - editor */
     .task {
-      margin-bottom: 15px;
-      padding: 15px;
-      background: #333;
-      border-radius: 6px;
       display: flex;
       gap: 10px;
       align-items: center;
+      background: var(--task-bg);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .task-actions button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      line-height: 1;
+      color: var(--error);
+      cursor: pointer;
+    }
+
+    /* Task list - viewer */
+    #viewer .task {
+      position: relative;
+      padding-left: 30px;
+      background: var(--card-bg);
+    }
+    #viewer .task.completed {
+      opacity: .6;
+    }
+    #viewer .task .checkmark {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: var(--success);
+      display: none;
+    }
+    #viewer .task.completed .checkmark {
+      display: block;
+    }
+    .task-link {
+      color: var(--primary);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .task-link:hover {
+      opacity: .8;
     }
 
     #countdown {
       font-size: 1.5em;
-      margin-top: 20px;
-      text-align: center;
       color: var(--primary);
-    }
-
-    #viewer .task {
-      background: #2a2a2a;
-      padding: 12px;
-    }
-
-    .task-actions {
-      display: flex;
-      gap: 8px;
-      margin-left: auto;
+      text-align: center;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
-<div class="card" id="generator">
-  <h1>PromoGate Generator</h1>
-  <div id="task-list"></div>
-  <button onclick="addTask()">+ Add Task</button>
-  <input type="url" id="reward-url" placeholder="Reward URL (e.g. https://yourdomain.com/reward)" required />
-  <button onclick="generateLink()">Generate Share Link</button>
-  <input type="text" id="share-link" readonly class="generated-link" />
-  <div id="link-feedback" class="feedback"></div>
-</div>
+  <div class="card" id="generator">
+    <h1>PromoGate Generator</h1>
+    <div id="task-list"></div>
+    <button onclick="addTask()">+ Add Task</button>
+    <input type="url" id="reward-url" placeholder="Reward URL (e.g. https://yourdomain.com/reward)" required />
+    <button onclick="generateLink()">Generate Share Link</button>
+    <input type="text" id="share-link" readonly class="generated-link" />
+    <div id="link-feedback" class="feedback"></div>
+  </div>
 
-<div class="card" id="viewer" style="display:none;">
-  <h2>Complete the Tasks Below</h2>
-  <div id="task-view"></div>
-  <button id="start-countdown" onclick="startCountdown()">Start Countdown</button>
-  <div id="countdown" style="display:none;"></div>
-</div>
+  <div class="card" id="viewer" style="display:none;">
+    <h2>Complete the Tasks Below</h2>
+    <div id="task-view"></div>
+    <button id="start-countdown" onclick="startCountdown()">Start Countdown</button>
+    <div id="countdown" style="display:none;"></div>
+  </div>
 
-<script>
-const taskTypes = {
-  yt_sub: "Subscribe to YouTube Channel",
-  yt_like: "Like YouTube Video",
-  click: "Click Link",
-  custom: "Custom Task"
-};
+  <script>
+    const taskTypes = {
+      yt_sub:   "Subscribe to YouTube Channel",
+      yt_like:  "Like YouTube Video",
+      click:    "Click Link",
+      custom:   "Custom Task"
+    };
+    let currentConfig = null;
 
-let currentConfig = null;
-
-function addTask() {
-  const taskDiv = document.createElement("div");
-  taskDiv.className = "task";
-  taskDiv.innerHTML = `
-    <select class="task-type" onchange="handleTaskTypeChange(this)">
-      ${Object.entries(taskTypes).map(([val, label]) => 
-        `<option value="${val}">${label}</option>`).join('')}
-    </select>
-    <input type="url" class="task-url" placeholder="Enter URL or instruction" required />
-    <div class="task-actions">
-      <button onclick="this.parentElement.parentElement.remove()">×</button>
-    </div>
-  `;
-  document.getElementById("task-list").appendChild(taskDiv);
-}
-
-function handleTaskTypeChange(select) {
-  const urlInput = select.parentElement.querySelector('.task-url');
-  urlInput.type = select.value === 'custom' ? 'text' : 'url';
-  urlInput.placeholder = select.value === 'custom' ? 
-    'Enter task instruction' : 'Enter URL';
-}
-
-function validateTasks() {
-  const tasks = Array.from(document.querySelectorAll('.task'));
-  return tasks.every(task => {
-    const url = task.querySelector('.task-url').value;
-    return url.trim() !== '';
-  });
-}
-
-function generateLink() {
-  if (!validateTasks()) {
-    showFeedback('Please fill all task fields', 'error');
-    return;
-  }
-
-  const tasks = Array.from(document.querySelectorAll('.task')).map(task => ({
-    type: task.querySelector('.task-type').value,
-    url: task.querySelector('.task-url').value
-  }));
-
-  const reward = document.getElementById("reward-url").value;
-  if (!reward || !isValidHttpUrl(reward)) {
-    showFeedback('Please enter a valid reward URL', 'error');
-    return;
-  }
-
-  const data = { tasks, reward };
-  const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
-  const link = `${location.origin}${location.pathname}#${encoded}`;
-  
-  document.getElementById("share-link").value = link;
-  showFeedback('Link generated! Click to copy', 'success');
-  setupCopyButton();
-}
-
-function setupCopyButton() {
-  document.getElementById("share-link").addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(document.getElementById("share-link").value);
-      showFeedback('Link copied to clipboard!', 'success');
-    } catch (err) {
-      showFeedback('Failed to copy link', 'error');
+    /* → Generator UI */
+    function addTask() {
+      const div = document.createElement('div');
+      div.className = 'task';
+      div.innerHTML = `
+        <select class="task-type" onchange="handleTaskTypeChange(this)">
+          ${Object.entries(taskTypes).map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}
+        </select>
+        <input type="url" class="task-url" placeholder="Enter URL or instruction" required />
+        <div class="task-actions">
+          <button onclick="this.closest('.task').remove()">×</button>
+        </div>`;
+      document.getElementById('task-list').append(div);
     }
-  });
-}
-
-function showFeedback(message, type) {
-  const feedback = document.getElementById("link-feedback");
-  feedback.textContent = message;
-  feedback.className = `feedback ${type}`;
-  feedback.style.display = 'block';
-  setTimeout(() => feedback.style.display = 'none', 3000);
-}
-
-function isValidHttpUrl(string) {
-  try {
-    const url = new URL(string);
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch (_) {
-    return false;
-  }
-}
-
-// Viewer functions
-function displayTasks(config) {
-  const taskView = document.getElementById("task-view");
-  taskView.innerHTML = config.tasks.map((task, i) => `
-    <div class="task">
-      <label>
-        <input type="checkbox" id="task-${i}" />
-        ${taskTypes[task.type] || "Task"}: 
-        ${task.type === 'custom' ? task.url : `<a href="${task.url}" target="_blank">${task.url}</a>`}
-      </label>
-    </div>
-  `).join('');
-}
-
-function startCountdown() {
-  if (!currentConfig.tasks.every((_, i) => document.getElementById(`task-${i}`).checked)) {
-    showFeedback('Please complete all tasks first', 'error');
-    return;
-  }
-
-  let seconds = 10;
-  const countdownEl = document.getElementById("countdown");
-  countdownEl.style.display = "block";
-  
-  const updateCountdown = () => {
-    countdownEl.textContent = `Redirecting in ${seconds}s...`;
-    if (seconds-- <= 0) {
-      window.location.href = currentConfig.reward;
-    } else {
-      setTimeout(updateCountdown, 1000);
+    function handleTaskTypeChange(sel) {
+      const inp = sel.closest('.task').querySelector('.task-url');
+      if (sel.value === 'custom') {
+        inp.type = 'text';
+        inp.placeholder = 'Enter task instruction';
+      } else {
+        inp.type = 'url';
+        inp.placeholder = 'Enter URL';
+      }
     }
-  };
-  
-  updateCountdown();
-}
-
-// Initial setup
-document.addEventListener('DOMContentLoaded', () => {
-  if (location.hash.length > 1) {
-    try {
-      const decoded = decodeURIComponent(atob(location.hash.slice(1)));
-      currentConfig = JSON.parse(decoded);
-      document.getElementById("generator").style.display = "none";
-      document.getElementById("viewer").style.display = "block";
-      displayTasks(currentConfig);
-    } catch (e) {
-      alert("Invalid or corrupted task configuration");
+    function validateTasks() {
+      return [...document.querySelectorAll('#task-list .task')].every(t => {
+        return t.querySelector('.task-url').value.trim() !== '';
+      });
     }
-  }
-});
-</script>
+    function generateLink() {
+      if (!validateTasks()) {
+        return showFeedback('Please fill all task fields', 'error');
+      }
+      const tasks = [...document.querySelectorAll('#task-list .task')].map(t => ({
+        type: t.querySelector('.task-type').value,
+        url:  t.querySelector('.task-url').value
+      }));
+      const reward = document.getElementById('reward-url').value;
+      try {
+        new URL(reward);
+      } catch {
+        return showFeedback('Please enter a valid reward URL', 'error');
+      }
+      const data = btoa(encodeURIComponent(JSON.stringify({tasks,reward})));
+      const link = `${location.origin + location.pathname}#${data}`;
+      const out  = document.getElementById('share-link');
+      out.value = link;
+      showFeedback('Link generated! Click to copy', 'success');
+      out.onclick = () => {
+        navigator.clipboard.writeText(link)
+          .then(()=> showFeedback('Link copied!', 'success'))
+          .catch(()=> showFeedback('Failed to copy', 'error'));
+      };
+    }
+    function showFeedback(msg, type) {
+      const fb = document.getElementById('link-feedback');
+      fb.textContent = msg;
+      fb.className = `feedback ${type}`;
+      fb.style.display = 'block';
+      setTimeout(()=> fb.style.display='none', 3000);
+    }
 
+    /* → Viewer UI */
+    function displayTasks(cfg) {
+      const container = document.getElementById('task-view');
+      container.innerHTML = cfg.tasks.map((task,i) => `
+        <div class="task" id="viewer-task-${i}">
+          <span class="checkmark">✓</span>
+          <label>
+            <input type="checkbox" id="task-${i}" />
+            ${taskTypes[task.type]}:
+            ${task.type === 'custom'
+              ? `<span class="task-link" data-index="${i}">${task.url}</span>`
+              : `<a href="${task.url}" target="_blank" class="task-link" data-index="${i}">${task.url}</a>`
+            }
+          </label>
+        </div>
+      `).join('');
+
+      // add click handlers for all .task-link
+      document.querySelectorAll('.task-link').forEach(link => {
+        link.addEventListener('click', e => {
+          const idx = link.dataset.index;
+          const url = link.tagName === 'A'
+            ? link.href
+            : link.textContent;
+          // open directly
+          window.open(url, '_blank');
+          // auto-check after 5s
+          setTimeout(()=>{
+            const cb = document.getElementById(`task-${idx}`);
+            if (!cb.checked) {
+              cb.checked = true;
+              document.getElementById(`viewer-task-${idx}`)
+                .classList.add('completed');
+            }
+          }, 5000);
+        });
+      });
+
+      // manual checkbox toggle adds/removes completed class
+      document.querySelectorAll('#task-view input[type=checkbox]')
+        .forEach(cb => cb.addEventListener('change', e => {
+          const idx = e.target.id.split('-')[1];
+          const taskDiv = document.getElementById(`viewer-task-${idx}`);
+          taskDiv.classList.toggle('completed', e.target.checked);
+        }));
+    }
+
+    function startCountdown() {
+      if (!currentConfig.tasks.every((_,i)=>document.getElementById(`task-${i}`).checked)) {
+        return showFeedback('Please complete all tasks first', 'error');
+      }
+      let sec = 10;
+      const el = document.getElementById('countdown');
+      el.style.display = 'block';
+      (function tick(){
+        el.textContent = `Redirecting in ${sec--}s…`;
+        if (sec < 0) window.location.href = currentConfig.reward;
+        else setTimeout(tick,1000);
+      })();
+    }
+
+    /* → On load: check for config hash */
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if (location.hash.length>1) {
+        try {
+          currentConfig = JSON.parse(decodeURIComponent(atob(location.hash.slice(1))));
+          document.getElementById('generator').style.display = 'none';
+          document.getElementById('viewer').style.display   = 'block';
+          displayTasks(currentConfig);
+        } catch {
+          alert('Invalid or corrupted task configuration');
+        }
+      }
+    });
+  </script>
 </body>
 </html>
