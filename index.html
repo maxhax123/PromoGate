@@ -4,118 +4,166 @@
   <meta charset="UTF-8">
   <title>PromoGate – Unlock Content Through Action</title>
   <style>
-    :root {
-      --primary: #4a90e2;
-      --background: #1a1a1a;
-      --card-bg: #2a2a2a;
-      --task-bg: #333;
-      --text: #fff;
-      --border: #404040;
-      --success: #28a745;
-      --error: #dc3545;
-    }
 
-    /* Base */
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--background);
-      color: var(--text);
-      margin: 0;
-      padding: 20px;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .card {
-      background: var(--card-bg);
-      border-radius: 8px;
-      padding: 20px;
-      margin: 20px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    h1, h2 { margin-top: 0; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
-    /* Inputs & Buttons */
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--task-bg);
-      color: var(--text);
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-    button {
-      background: var(--primary);
-      border: none;
-      cursor: pointer;
-      transition: opacity .2s, transform .1s;
-    }
-    button:hover { opacity: .9; transform: translateY(-1px); }
-    .feedback {
-      padding: 8px;
-      margin-top: 10px;
-      border-radius: 4px;
-      display: none;
-      font-weight: bold;
-    }
-    .feedback.success { background: var(--success); }
-    .feedback.error   { background: var(--error); }
+:root {
+  --primary: #4a90e2;
+  --background: #111;
+  --text: #f0f0f0;
+  --card: #1c1c1c;
+  --border: #2a2a2a;
+  --success: #2ecc71;
+  --danger: #e74c3c;
+}
 
-    /* Task list - editor */
-    .task {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      background: var(--task-bg);
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-    }
-    .task-actions button {
-      background: transparent;
-      border: none;
-      font-size: 1.2rem;
-      line-height: 1;
-      color: var(--error);
-      cursor: pointer;
-    }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--background);
+  color: var(--text);
+  margin: 0;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
 
-    /* Task list - viewer */
-    #viewer .task {
-      position: relative;
-      padding-left: 30px;
-      background: var(--card-bg);
-    }
-    #viewer .task.completed {
-      opacity: .6;
-    }
-    #viewer .task .checkmark {
-  margin-left: 8px;
-  font-size: 1.2rem;
-  color: var(--success);
+h1, h2 {
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 720px;
+  box-sizing: border-box;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #222;
+  color: var(--text);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+button {
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #3f7dd1;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1f1f1f;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  border-left: 4px solid var(--primary);
+  position: relative;
+}
+
+.task label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  font-size: 0.97rem;
+}
+
+.task a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.task a:hover {
+  text-decoration: underline;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.task button {
+  width: auto;
+  padding: 8px 12px;
+  background: #ff3c3c;
+  font-weight: bold;
+}
+
+.task-type,
+.task-url {
+  flex: 1;
+  margin: 0;
+}
+
+.generated-link {
+  background: #1f1f1f;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.feedback {
+  margin-top: 10px;
+  font-size: 0.9rem;
   display: none;
-    }
-    #viewer .task.completed .checkmark {
-      display: block;
-    }
-    .task-link {
-      color: var(--primary);
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    .task-link:hover {
-      opacity: .8;
-    }
+}
 
-    #countdown {
-      font-size: 1.5em;
-      color: var(--primary);
-      text-align: center;
-      margin-top: 20px;
-    }
+.feedback.success {
+  color: var(--success);
+}
+
+.feedback.error {
+  color: var(--danger);
+}
+
+#countdown {
+  text-align: center;
+  font-size: 1.4rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.checkmark {
+  font-size: 1.4rem;
+  color: var(--success);
+  margin-left: 12px;
+  display: none;
+  transition: transform 0.3s ease;
+}
+
+.completed .checkmark {
+  display: inline;
+  transform: scale(1.1);
+}
+
   </style>
 </head>
 <body>
@@ -215,11 +263,13 @@
         <div class="task" id="viewer-task-${i}">
           <span class="checkmark">✓</span>
           <label>
-  <input type="checkbox" id="task-${i}" disabled />
-  ${taskTypes[task.type]}:
-  <span class="task-link" data-index="${i}">${task.url}</span>
-  <span class="checkmark">✓</span>
-</label>
+            <input type="checkbox" id="task-${i}" />
+            ${taskTypes[task.type]}:
+            ${task.type === 'custom'
+              ? `<span class="task-link" data-index="${i}">${task.url}</span>`
+              : `<a href="${task.url}" target="_blank" class="task-link" data-index="${i}">${task.url}</a>`
+            }
+          </label>
         </div>
       `).join('');
 
