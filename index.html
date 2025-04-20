@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AdTaskPool Generator</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 700px; margin: auto; }
+    input, select, button { margin: 5px 0; width: 100%; padding: 8px; }
+    .task { margin-bottom: 15px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+    #viewer .task { background: #f9f9f9; }
+    #countdown { font-size: 1.5em; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h1>AdTaskPool Generator</h1>
+
+<div id="generator">
+  <div id="task-list"></div>
+  <button onclick="addTask()">+ Add Task</button>
+  <input type="url" id="reward-url" placeholder="Reward URL (e.g. final destination)" />
+  <button onclick="generateLink()">Generate Share Link</button>
+  <input type="text" id="share-link" readonly />
+</div>
+
+<hr>
+
+<div id="viewer" style="display:none;">
+  <h2>Complete the Tasks Below</h2>
+  <div id="task-view"></div>
+  <button id="start-countdown" onclick="startCountdown()">Start Countdown</button>
+  <div id="countdown" style="display:none;"></div>
+</div>
+
+<script>
+const taskTypes = {
+  yt_sub: "Subscribe to this YouTube Channel",
+  yt_like: "Like this YouTube Video",
+  click: "Click this Link",
+  custom: "Custom Task"
+};
+
+function addTask() {
+  const taskDiv = document.createElement("div");
+  taskDiv.className = "task";
+  taskDiv.innerHTML = `
+    <select class="task-type">
+      ${Object.entries(taskTypes).map(([val, label]) => `<option value="${val}">${label}</option>`).join('')}
+    </select>
+    <input type="url" class="task-url" placeholder="Enter URL or instruction" />
+  `;
+  document.getElementById("task-list").appendChild(taskDiv);
+}
+
+function generateLink() {
+  const tasks = Array.from(document.querySelectorAll('.task')).map(task => {
+    return {
+      type: task.querySelector('.task-type').value,
+      url: task.querySelector('.task-url').value
+    };
+  });
+  const reward = document.getElementById("reward-url").value;
+  const data = { tasks, reward };
+  const encoded = btoa(JSON.stringify(data));
+  const link = `${location.origin}${location.pathname}#${encoded}`;
+  document.getElementById("share-link").value = link;
+}
+
+function displayTasks(config) {
+  const taskView = document.getElementById("task-view");
+  config.tasks.forEach((task, i) => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `
+      <label><input type="checkbox" id="task-${i}" /> ${taskTypes[task.type] || "Task"}:
+        <a href="${task.url}" target="_blank">${task.url}</a>
+      </label>
+    `;
+    taskView.appendChild(div);
+  });
+}
+
+function allTasksChecked(config) {
+  return config.tasks.every((_, i) => document.getElementById(`task-${i}`).checked);
+}
+
+function startCountdown() {
+  if (!allTasksChecked(currentConfig)) {
+    alert("Please complete all tasks first.");
+    return;
+  }
+
+  let time = 10; // seconds
+  const countdownEl = document.getElementById("countdown");
+  countdownEl.style.display = "block";
+  const interval = setInterval(() => {
+    countdownEl.textContent = `Please wait... ${time}s`;
+    time--;
+    if (time < 0) {
+      clearInterval(interval);
+      window.location.href = currentConfig.reward;
+    }
+  }, 1000);
+}
+
+let currentConfig = null;
+
+if (location.hash.length > 1) {
+  document.getElementById("generator").style.display = "none";
+  document.getElementById("viewer").style.display = "block";
+
+  try {
+    const decoded = atob(location.hash.slice(1));
+    const config = JSON.parse(decoded);
+    currentConfig = config;
+    displayTasks(config);
+  } catch (e) {
+    alert("Invalid task config in URL.");
+  }
+}
+</script>
+
+</body>
+</html>
