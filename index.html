@@ -74,32 +74,33 @@
       background: #3f7dd1;
     }
 
-    .task {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #1f1f1f;
-      padding: 16px 20px;
-      border-radius: 10px;
-      margin-bottom: 14px;
-      border-left: 4px solid var(--primary);
-      position: relative;
-      flex-wrap: wrap;
-      word-wrap: break-word;
+.task {
+  display: flex;
+  flex-direction: column; /* Stack content to prevent horizontal overflow */
+  align-items: flex-start;
+  background: #1f1f1f;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  border-left: 4px solid var(--primary);
+  position: relative;
+  box-sizing: border-box;
+  max-width: 100%;
   overflow-wrap: break-word;
+  word-wrap: break-word;
   white-space: normal;
 }
 
 
 
-    .task label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      font-size: 0.97rem;
-      word-break: break-word;
-    }
+.task label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.97rem;
+  word-break: break-word;
+  width: 100%;
+}
 
     .task a {
       color: var(--primary);
