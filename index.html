@@ -93,13 +93,10 @@
       opacity: .6;
     }
     #viewer .task .checkmark {
-      position: absolute;
-      left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.2rem;
-      color: var(--success);
-      display: none;
+  margin-left: 8px;
+  font-size: 1.2rem;
+  color: var(--success);
+  display: none;
     }
     #viewer .task.completed .checkmark {
       display: block;
@@ -218,13 +215,11 @@
         <div class="task" id="viewer-task-${i}">
           <span class="checkmark">✓</span>
           <label>
-            <input type="checkbox" id="task-${i}" />
-            ${taskTypes[task.type]}:
-            ${task.type === 'custom'
-              ? `<span class="task-link" data-index="${i}">${task.url}</span>`
-              : `<a href="${task.url}" target="_blank" class="task-link" data-index="${i}">${task.url}</a>`
-            }
-          </label>
+  <input type="checkbox" id="task-${i}" disabled />
+  ${taskTypes[task.type]}:
+  <span class="task-link" data-index="${i}">${task.url}</span>
+  <span class="checkmark">✓</span>
+</label>
         </div>
       `).join('');
 
