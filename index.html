@@ -4,166 +4,167 @@
   <meta charset="UTF-8">
   <title>PromoGate – Unlock Content Through Action</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+    :root {
+      --primary: #4a90e2;
+      --background: #111;
+      --text: #f0f0f0;
+      --card: #1c1c1c;
+      --border: #2a2a2a;
+      --success: #2ecc71;
+      --danger: #e74c3c;
+    }
 
-:root {
-  --primary: #4a90e2;
-  --background: #111;
-  --text: #f0f0f0;
-  --card: #1c1c1c;
-  --border: #2a2a2a;
-  --success: #2ecc71;
-  --danger: #e74c3c;
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--background);
-  color: var(--text);
-  margin: 0;
-  padding: 40px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-}
+    h1, h2 {
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+    }
 
-h1, h2 {
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 20px;
-}
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 720px;
+      box-sizing: border-box;
+    }
 
-.card {
-  background: var(--card);
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  max-width: 720px;
-  box-sizing: border-box;
-}
+    input, select, button {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #222;
+      color: var(--text);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
 
-input, select, button {
-  width: 100%;
-  padding: 14px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: #222;
-  color: var(--text);
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
 
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--primary);
-}
+    button {
+      background: var(--primary);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
 
-button {
-  background: var(--primary);
-  border: none;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
+    button:hover {
+      background: #3f7dd1;
+    }
 
-button:hover {
-  background: #3f7dd1;
-}
+    .task {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1f1f1f;
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      border-left: 4px solid var(--primary);
+      position: relative;
+      flex-wrap: wrap;
+    }
 
-.task {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #1f1f1f;
-  padding: 16px 20px;
-  border-radius: 10px;
-  margin-bottom: 14px;
-  border-left: 4px solid var(--primary);
-  position: relative;
-}
+    .task label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      font-size: 0.97rem;
+      word-break: break-word;
+    }
 
-.task label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  font-size: 0.97rem;
-}
+    .task a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      word-break: break-all;
+    }
 
-.task a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 500;
-}
+    .task a:hover {
+      text-decoration: underline;
+    }
 
-.task a:hover {
-  text-decoration: underline;
-}
+    .task-actions {
+      display: flex;
+      gap: 8px;
+    }
 
-.task-actions {
-  display: flex;
-  gap: 8px;
-}
+    .task button {
+      width: auto;
+      padding: 8px 12px;
+      background: #ff3c3c;
+      font-weight: bold;
+    }
 
-.task button {
-  width: auto;
-  padding: 8px 12px;
-  background: #ff3c3c;
-  font-weight: bold;
-}
+    .task-type,
+    .task-url {
+      flex: 1;
+      margin: 0;
+    }
 
-.task-type,
-.task-url {
-  flex: 1;
-  margin: 0;
-}
+    .generated-link {
+      background: #1f1f1f;
+      font-weight: 500;
+      cursor: pointer;
+    }
 
-.generated-link {
-  background: #1f1f1f;
-  font-weight: 500;
-  cursor: pointer;
-}
+    .feedback {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      display: none;
+    }
 
-.feedback {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  display: none;
-}
+    .feedback.success {
+      color: var(--success);
+    }
 
-.feedback.success {
-  color: var(--success);
-}
+    .feedback.error {
+      color: var(--danger);
+    }
 
-.feedback.error {
-  color: var(--danger);
-}
+    #countdown {
+      text-align: center;
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-top: 20px;
+    }
 
-#countdown {
-  text-align: center;
-  font-size: 1.4rem;
-  color: var(--primary);
-  font-weight: 600;
-  margin-top: 20px;
-}
+    .checkmark {
+      font-size: 1.4rem;
+      color: var(--success);
+      margin-left: 12px;
+      display: none;
+      transition: transform 0.3s ease;
+    }
 
-.checkmark {
-  font-size: 1.4rem;
-  color: var(--success);
-  margin-left: 12px;
-  display: none;
-  transition: transform 0.3s ease;
-}
-
-.completed .checkmark {
-  display: inline;
-  transform: scale(1.1);
-}
-
+    .completed .checkmark {
+      display: inline;
+      transform: scale(1.1);
+    }
   </style>
 </head>
 <body>
@@ -194,7 +195,6 @@ button:hover {
     };
     let currentConfig = null;
 
-    /* → Generator UI */
     function addTask() {
       const div = document.createElement('div');
       div.className = 'task';
@@ -208,6 +208,7 @@ button:hover {
         </div>`;
       document.getElementById('task-list').append(div);
     }
+
     function handleTaskTypeChange(sel) {
       const inp = sel.closest('.task').querySelector('.task-url');
       if (sel.value === 'custom') {
@@ -218,11 +219,13 @@ button:hover {
         inp.placeholder = 'Enter URL';
       }
     }
+
     function validateTasks() {
       return [...document.querySelectorAll('#task-list .task')].every(t => {
         return t.querySelector('.task-url').value.trim() !== '';
       });
     }
+
     function generateLink() {
       if (!validateTasks()) {
         return showFeedback('Please fill all task fields', 'error');
@@ -237,93 +240,78 @@ button:hover {
       } catch {
         return showFeedback('Please enter a valid reward URL', 'error');
       }
-      const data = btoa(encodeURIComponent(JSON.stringify({tasks,reward})));
+      const data = btoa(encodeURIComponent(JSON.stringify({tasks, reward})));
       const link = `${location.origin + location.pathname}#${data}`;
       const out  = document.getElementById('share-link');
       out.value = link;
       showFeedback('Link generated! Click to copy', 'success');
       out.onclick = () => {
         navigator.clipboard.writeText(link)
-          .then(()=> showFeedback('Link copied!', 'success'))
-          .catch(()=> showFeedback('Failed to copy', 'error'));
+          .then(() => showFeedback('Link copied!', 'success'))
+          .catch(() => showFeedback('Failed to copy', 'error'));
       };
     }
+
     function showFeedback(msg, type) {
       const fb = document.getElementById('link-feedback');
       fb.textContent = msg;
       fb.className = `feedback ${type}`;
       fb.style.display = 'block';
-      setTimeout(()=> fb.style.display='none', 3000);
+      setTimeout(() => fb.style.display = 'none', 3000);
     }
 
-    /* → Viewer UI */
     function displayTasks(cfg) {
       const container = document.getElementById('task-view');
-      container.innerHTML = cfg.tasks.map((task,i) => `
+      container.innerHTML = cfg.tasks.map((task, i) => `
         <div class="task" id="viewer-task-${i}">
           <span class="checkmark">✓</span>
           <label>
-            <input type="checkbox" id="task-${i}" />
+            <input type="checkbox" id="task-${i}" disabled />
             ${taskTypes[task.type]}:
             ${task.type === 'custom'
               ? `<span class="task-link" data-index="${i}">${task.url}</span>`
-              : `<a href="${task.url}" target="_blank" class="task-link" data-index="${i}">${task.url}</a>`
-            }
+              : `<a href="${task.url}" target="_blank" class="task-link" data-index="${i}">${task.url}</a>`}
           </label>
         </div>
       `).join('');
 
-      // add click handlers for all .task-link
       document.querySelectorAll('.task-link').forEach(link => {
-        link.addEventListener('click', e => {
+        link.addEventListener('click', () => {
           const idx = link.dataset.index;
-          const url = link.tagName === 'A'
-            ? link.href
-            : link.textContent;
-          // open directly
+          const url = link.tagName === 'A' ? link.href : link.textContent;
           window.open(url, '_blank');
-          // auto-check after 5s
-          setTimeout(()=>{
+          setTimeout(() => {
             const cb = document.getElementById(`task-${idx}`);
-            if (!cb.checked) {
+            const taskDiv = document.getElementById(`viewer-task-${idx}`);
+            if (!taskDiv.classList.contains('completed')) {
               cb.checked = true;
-              document.getElementById(`viewer-task-${idx}`)
-                .classList.add('completed');
+              taskDiv.classList.add('completed');
             }
           }, 5000);
         });
       });
-
-      // manual checkbox toggle adds/removes completed class
-      document.querySelectorAll('#task-view input[type=checkbox]')
-        .forEach(cb => cb.addEventListener('change', e => {
-          const idx = e.target.id.split('-')[1];
-          const taskDiv = document.getElementById(`viewer-task-${idx}`);
-          taskDiv.classList.toggle('completed', e.target.checked);
-        }));
     }
 
     function startCountdown() {
-      if (!currentConfig.tasks.every((_,i)=>document.getElementById(`task-${i}`).checked)) {
+      if (!currentConfig.tasks.every((_, i) => document.getElementById(`task-${i}`).checked)) {
         return showFeedback('Please complete all tasks first', 'error');
       }
       let sec = 10;
       const el = document.getElementById('countdown');
       el.style.display = 'block';
-      (function tick(){
+      (function tick() {
         el.textContent = `Redirecting in ${sec--}s…`;
         if (sec < 0) window.location.href = currentConfig.reward;
-        else setTimeout(tick,1000);
+        else setTimeout(tick, 1000);
       })();
     }
 
-    /* → On load: check for config hash */
-    document.addEventListener('DOMContentLoaded', ()=>{
-      if (location.hash.length>1) {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (location.hash.length > 1) {
         try {
           currentConfig = JSON.parse(decodeURIComponent(atob(location.hash.slice(1))));
           document.getElementById('generator').style.display = 'none';
-          document.getElementById('viewer').style.display   = 'block';
+          document.getElementById('viewer').style.display = 'block';
           displayTasks(currentConfig);
         } catch {
           alert('Invalid or corrupted task configuration');
