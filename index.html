@@ -85,7 +85,12 @@
       border-left: 4px solid var(--primary);
       position: relative;
       flex-wrap: wrap;
-    }
+      word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+
 
     .task label {
       display: flex;
@@ -103,9 +108,13 @@
       word-break: break-all;
     }
 
-    .task a:hover {
-      text-decoration: underline;
-    }
+.task a,
+.task .task-link {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  display: inline-block;
+  max-width: 100%;
+}
 
     .task-actions {
       display: flex;
